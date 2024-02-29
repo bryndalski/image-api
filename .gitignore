@@ -1,0 +1,15 @@
+node_modules
+# Keep environment variables out of version control
+.env
+# Ignore the build directory
+build
+# Ignore the coverage directory
+coverage
+# Ignore the .vscode directory
+.vscode
+# Ignore the .idea directory
+.idea
+# Ignore the .DS_Store file
+.DS_Store
+#Ignore assets directory
+assets
