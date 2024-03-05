@@ -1,7 +1,7 @@
 import { aws_cognito, CfnParameter, Duration, Stack, StackProps } from "aws-cdk-lib";
 
 import type { Construct } from "constructs";
-import { AccountRecovery, UserPool, UserPoolEmail } from "aws-cdk-lib/aws-cognito";
+import { AccountRecovery, UserPool, UserPoolClient, UserPoolEmail } from "aws-cdk-lib/aws-cognito";
 import { SystemRoles } from "../server/src/common/Auth/UserRoles";
 
 
@@ -14,6 +14,7 @@ import { SystemRoles } from "../server/src/common/Auth/UserRoles";
  */
 export class Image_api_statefulStack extends Stack {
   cognito: UserPool;
+  cognitoClient: UserPoolClient;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -96,7 +97,7 @@ export class Image_api_statefulStack extends Stack {
 
     const domains = ["http://localhost:3000"];
 
-    const userPoolClient = new aws_cognito.UserPoolClient(
+    this.cognitoClient = new aws_cognito.UserPoolClient(
       this,
       "CognitoUserPoolClient",
       {

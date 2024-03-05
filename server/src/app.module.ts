@@ -4,7 +4,10 @@ import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CognitoAuthModule } from "@nestjs-cognito/auth";
-import { HealthModule } from './health/health.module';
+import { HealthModule } from "./health/health.module";
+import { ImagesModule } from "./images/images.module";
+import { FileManagerModule } from "./file-manager/file-manager.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [
@@ -23,7 +26,18 @@ import { HealthModule } from './health/health.module';
       }),
       inject: [ConfigService],
     }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        type: "mongodb",
+        url: configService.get("MONGODB_URI"),
+        synchronize: true,
+      }),
+      inject: [ConfigService],
+    }),
     HealthModule,
+    ImagesModule,
+    FileManagerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
