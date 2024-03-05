@@ -11,7 +11,7 @@ export class ImagesService {
   constructor(
     @Inject(FileManagerService)
     private readonly fileManagerService: FileManagerService,
-    @InjectModel("Image")
+    @InjectModel(Image.name)
     private readonly imageModel: Model<ImageDocument>,
     private readonly configService: ConfigService
   ) {}
