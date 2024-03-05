@@ -4,7 +4,7 @@ import type { Construct } from "constructs";
 
 import { Vpc } from "aws-cdk-lib/aws-ec2";
 
-export class ECPSVpcStack extends cdk.Stack {
+export class ImageApiVpcStack extends cdk.Stack {
   vpc: Vpc;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
