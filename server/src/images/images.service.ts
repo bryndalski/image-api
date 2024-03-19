@@ -2,7 +2,8 @@ import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { FileManagerService } from "../file-manager/file-manager.service";
 import { v4 } from "uuid";
 import { InjectModel } from "@nestjs/mongoose";
-import { Image, ImageDocument } from "./entities/image.entity";
+import type { ImageDocument } from "./entities/image.entity";
+import { Image } from "./entities/image.entity";
 import { Model } from "mongoose";
 import { ConfigService } from "@nestjs/config";
 
@@ -29,12 +30,15 @@ export class ImagesService {
       imageSize: image.size,
       userId: userUuid,
       imageExtension: image.mimetype.split("/")[1],
+      imageUrl: Image.setImageUrl(userUuid, image.mimetype.split("/")[1], uuid),
       id: uuid,
+      imageName: image.originalname,
+      isLoved: false,
     });
 
     const newDatabaseImage = new this.imageModel({ ...newImageMongoDocument });
 
-    const [fileSaveResult, newImage] = await Promise.all([
+    const [newImage] = await Promise.all([
       this.fileManagerService.uploadImage(userUuid, uuid, image),
       newDatabaseImage.save(),
     ]);
@@ -48,7 +52,7 @@ export class ImagesService {
    * @returns Promise<ImageDocument[]>
    */
   async findAll(userUuid: string) {
-    return this.imageModel.find({ userId: userUuid }) || [];
+    return { images: (await this.imageModel.find({ userId: userUuid })) || [] };
   }
 
   /**

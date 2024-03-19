@@ -1,5 +1,5 @@
 import * as cdk from "aws-cdk-lib";
-import { aws_cognito, CfnParameter, Duration, Stack, StackProps } from "aws-cdk-lib";
+import { aws_cognito, CfnParameter, Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import type { Construct } from "constructs";
 import { AccountRecovery, UserPool, UserPoolEmail } from "aws-cdk-lib/aws-cognito";
 import { SystemRoles } from "../server/src/common/Auth/UserRoles";
@@ -12,7 +12,7 @@ import { SystemRoles } from "../server/src/common/Auth/UserRoles";
  * @extends Stack
  * @constructs
  */
-export class Image_api_statefulStack extends Stack {
+export class ImageApiStatefulStack extends Stack {
   cognito: cdk.aws_cognito.UserPool;
   cognitoClient: cdk.aws_cognito.UserPoolClient;
 
@@ -21,7 +21,7 @@ export class Image_api_statefulStack extends Stack {
     this.createCognitoUserPool();
 
     this.createCognitoGroups();
-    // this.createCognitoUserRoot()
+    // this.createCognitoUserRoot();
   }
 
 
@@ -41,11 +41,11 @@ export class Image_api_statefulStack extends Stack {
         },
         familyName: {
           required: true,
-          mutable: false
+          mutable: true
         },
         givenName: {
           required: true,
-          mutable: false
+          mutable: true
         },
         profilePicture: {
           required: false,
@@ -71,7 +71,8 @@ export class Image_api_statefulStack extends Stack {
         emailSubject: "Account invitation",
         emailBody:
           "Witaj w systemie pictureApi: {username} \nA twoje hasło: {####}"
-      }
+      },
+      removalPolicy: RemovalPolicy.DESTROY
     });
 
     const userPoolDomainPrefix = new CfnParameter(
@@ -134,7 +135,7 @@ export class Image_api_statefulStack extends Stack {
    * @private
    * @description create groups for the application
    * @returns void
-   * @memberof Image_api_statefulStack
+   * @memberof ImageApiStatefulStack
    */
   private createCognitoGroups() {
     Object.values(SystemRoles).forEach((value) => {
@@ -151,11 +152,12 @@ export class Image_api_statefulStack extends Stack {
    * @private
    * @description create root user with email `kubabryndal@gmail.com` and assign him to `ADMIN` group
    * @returns void
-   * @memberof Image_api_statefulStack
+   * @memberof ImageApiStatefulStack
    */
   private createCognitoUserRoot() {
     const user = new aws_cognito.CfnUserPoolUser(this, "CreateUserRoot", {
       userPoolId: this.cognito.userPoolId,
+      username: "kubabryndal@gmail.com",
       userAttributes: [
         {
           name: "family_name",

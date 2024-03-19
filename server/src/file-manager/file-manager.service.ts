@@ -39,9 +39,9 @@ export class FileManagerService {
    * @param file file to be uploaded
    */
   async uploadImage(uuid: string, imageKey: string, file: Express.Multer.File) {
-    const Key = `${uuid}/${imageKey}`;
-    const response = await this.uploadS3File(Key, file);
-    return response.$metadata.httpStatusCode;
+    const Key = `${uuid}/${imageKey}.${file.mimetype.split("/")[1]}`;
+    await this.uploadS3File(Key, file);
+    return Key;
   }
 
   /**
@@ -54,7 +54,7 @@ export class FileManagerService {
     return await this.s3.putObject({
       Bucket: this.configService.get("S3_BUCKET_NAME"),
       Key: objectKey,
-      Body: file.originalname,
+      Body: file.buffer,
     });
   }
 }

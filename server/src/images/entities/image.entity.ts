@@ -1,4 +1,4 @@
-import { HydratedDocument } from "mongoose";
+import type { HydratedDocument } from "mongoose";
 import { IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
@@ -40,6 +40,15 @@ export class Image {
   userId: string;
 
   @Prop({
+    required: true,
+    type: String,
+  })
+  @ApiProperty({
+    description: "Image name",
+  })
+  imageName: string;
+
+  @Prop({
     default(val: any): any {
       return new Date();
     },
@@ -59,21 +68,22 @@ export class Image {
   })
   imageExtension: string;
 
+  @Prop()
+  @ApiProperty({
+    description: "Is loved",
+  })
+  isLoved: boolean;
+
   @Prop({})
   readonly id: string;
 
-  constructor(props: Omit<Image, "imageUrl" | "createdAt" | "setImageUrl">) {
+  constructor(props: Omit<Image, "createdAt" | "setImageUrl">) {
     Object.assign(this, props);
   }
 
-  public setImageUrl() {
-    this.imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${this.userId}/${this.id}.${this.imageExtension}`;
+  static setImageUrl(uuid, extention, id): string {
+    return `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET_NAME}/${uuid}/${id}.${extention}`;
   }
 }
 
 export const ImageSchema = SchemaFactory.createForClass(Image);
-
-ImageSchema.pre("save", function (next) {
-  this.setImageUrl();
-  next();
-});

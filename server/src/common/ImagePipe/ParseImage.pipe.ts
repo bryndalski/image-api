@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, ParseFilePipe, ParseFilePipeBuilder } from "@nestjs/common";
+import type { ParseFilePipe } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  ParseFilePipeBuilder,
+} from "@nestjs/common";
 
 /**
  * ParseImagePipe
@@ -6,21 +11,9 @@ import { HttpException, HttpStatus, ParseFilePipe, ParseFilePipeBuilder } from "
  * @throws: HttpException
  * @returns: Express.Multer.File
  */
-export const ParseImagePipe: ParseFilePipe = new ParseFilePipeBuilder()
-  .addFileTypeValidator({
-    fileType: "png",
-  })
-  .addFileTypeValidator({
-    fileType: "jpeg",
-  })
-  .addFileTypeValidator({
-    fileType: "jpg",
-  })
-  .addMaxSizeValidator({
-    maxSize: 1000000, // just to you know it's possible.
-  })
-  .build({
-    exceptionFactory(error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    },
-  });
+export const ParseImagePipe: ParseFilePipe = new ParseFilePipeBuilder().build({
+  exceptionFactory(error) {
+    console.log("error", error);
+    throw new HttpException(error, HttpStatus.BAD_REQUEST);
+  },
+});

@@ -1,6 +1,6 @@
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CognitoAuthModule } from "@nestjs-cognito/auth";
-import { DynamicModule } from "@nestjs/common";
+import type { DynamicModule } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 export const providers: DynamicModule[] = [
@@ -9,9 +9,9 @@ export const providers: DynamicModule[] = [
   }),
   CognitoAuthModule.registerAsync({
     imports: [ConfigModule],
-    useFactory: async (configService: ConfigService) => ({
+    useFactory: (configService: ConfigService) => ({
       jwtVerifier: {
-        userPoolId: configService.get("COGNITO_USER_POOL_ID") as string,
+        userPoolId: configService.get("COGNITO_USER_POOL_ID"),
         clientId: configService.get("COGNITO_CLIENT_ID"),
         tokenUse: "id",
       },

@@ -11,24 +11,20 @@ import {
 import { ImagesService } from "./images.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ParseImagePipe } from "../common/ImagePipe/ParseImage.pipe";
-import {
-  AuthenticationGuard,
-  Authorization,
-  CognitoUser,
-} from "@nestjs-cognito/auth";
-import { SystemRoles } from "../common/Auth/UserRoles";
-import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { AuthenticationGuard, CognitoUser } from "@nestjs-cognito/auth";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Image } from "./entities/image.entity";
 
+@ApiTags("Images")
 @UseGuards(AuthenticationGuard)
-@Authorization({
-  allowedGroups: [SystemRoles.USER, SystemRoles.ADMIN],
-})
+// @Authorization({
+//   allowedGroups: [SystemRoles.USER, SystemRoles.ADMIN],
+// })
 @Controller("images")
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
-  @Post("upload")
+  @Post("/add")
   @UseInterceptors(FileInterceptor("file"))
   @ApiOperation({ summary: "Upload an image" })
   @ApiOkResponse({ description: "Image uploaded", type: Image })
